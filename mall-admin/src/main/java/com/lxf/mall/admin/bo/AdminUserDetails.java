@@ -1,7 +1,7 @@
 package com.lxf.mall.admin.bo;
 
 import com.lxf.mall.mbg.bo.UmsAdmin;
-import com.lxf.mall.mbg.bo.UmsPermission;
+import com.lxf.mall.mbg.bo.UmsResource;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,36 +11,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @author xufeng.liu
- * @email xueshzd@163.com
- * @date 2019/12/10 16:18
  * SpringSecurity需要的用户详情
+ * Created by macro on 2018/4/26.
  */
 public class AdminUserDetails implements UserDetails {
-
     private UmsAdmin umsAdmin;
-    private List<UmsPermission> permissionList;
-
-    public List<UmsPermission> getPermissionList() {
-        return permissionList;
-    }
-
-    public void setPermissionList(List<UmsPermission> permissionList) {
-        this.permissionList = permissionList;
-    }
-
-    public UmsAdmin getUmsAdmin() {
-        return umsAdmin;
-    }
-
-    public void setUmsAdmin(UmsAdmin umsAdmin) {
+    private List<UmsResource> resourceList;
+    public AdminUserDetails(UmsAdmin umsAdmin, List<UmsResource> resourceList) {
         this.umsAdmin = umsAdmin;
+        this.resourceList = resourceList;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return permissionList.stream().filter(permission -> permission.getValue() != null).
-                map(permission -> new SimpleGrantedAuthority(permission.getValue())).collect(Collectors.toList());
+        //返回当前用户的角色
+        return resourceList.stream()
+                .map(role ->new SimpleGrantedAuthority(role.getId()+":"+role.getName()))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -70,11 +57,6 @@ public class AdminUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return umsAdmin.getStatus().equals("1");
-    }
-
-    public AdminUserDetails(UmsAdmin umsAdmin, List<UmsPermission> permissionList) {
-        this.umsAdmin = umsAdmin;
-        this.permissionList = permissionList;
+        return umsAdmin.getStatus().equals(1);
     }
 }

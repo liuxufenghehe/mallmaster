@@ -1,11 +1,14 @@
 package com.lxf.mall.admin.dao;
 
+import com.lxf.mall.mbg.bo.UmsAdminPermissionRelation;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
 /**
- * @author xufeng.liu
- * @email xueshzd@163.com
- * @date 2019/12/11 10:54
+ * 用户权限自定义Dao
+ * Created by macro on 2018/10/8.
  */
 public interface UmsAdminPermissionRelationDao {
-
-
+    int insertList(@Param("list") List<UmsAdminPermissionRelation> list);
 }
